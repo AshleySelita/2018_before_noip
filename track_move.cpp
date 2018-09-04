@@ -61,5 +61,7 @@ int main() {
         if(uf == vf) {continue;}
         AddEdge(u, v, w); unionn(u, v);
     }
-    
+    for (int i = 1; i <= n; ++i) {
+        
+    }
 }
