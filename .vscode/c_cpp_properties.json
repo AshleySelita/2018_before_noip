@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": "F:\\MZQ\\TDM-GCC-64\\bin\\g++.exe -Wall -Wextra -Wconversion"
+        }
+    ],
+    "version": 4
+}
