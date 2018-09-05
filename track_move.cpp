@@ -7,7 +7,7 @@ const int MAXQ = 30010;
 const int MAXZ = 100010;
 struct EDGE{
     int to, fr, wgh;
-}edge[MAXM << 1];
+}edge[MAXM];
 struct TreeEDGE{
     int to, wgh, next;
 }treeedge[MAXN << 1];
@@ -21,10 +21,6 @@ inline void swap(int &a, int &b) {a ^= b; b ^= a; a ^= b;}
 inline void add_edge(int u, int v, int w) {
     edge[++top].fr = u;
     edge[top].to = v;
-    edge[top].wgh = w;
-
-    edge[++top].fr = v;
-    edge[top].to = u;
     edge[top].wgh = w;
 
     return ;
@@ -54,7 +50,7 @@ inline void unionn(int u, int v) {
 
 inline void dfs(int now, int bef) {
     dep[now] = dep[bef] + 1;
-    fa[now][0] = now;
+    fa[now][0] = bef;
     for (int i = 1; i < 20; ++i) {
         fa[now][i] = fa[fa[now][i - 1]][i - 1];
         mulmin[now][i] = 
@@ -70,18 +66,18 @@ inline void dfs(int now, int bef) {
 inline void Mul_Lca(int u, int v) {
     if(dep[u] < dep[v]) swap(u, v);
     int ans(0x7fffffff);
-    for (int i = 19; i >= 0; --i) 
-        if(dep[u] - (1 << i) >= dep[v]) {
+    for (int i = 19; i >= 0; --i)
+        if(dep[fa[u][i]] >= dep[v]) {
             ans = min(ans, mulmin[u][i]);
             u = fa[u][i];
         }
     if(u == v) {printf("%d\n", ans); return ;}
-    for (int i = 19; i >= 0; --i) 
+    for (int i = 19; i >= 0; --i)
         if(fa[u][i] != fa[v][i]) {
             ans = min(ans, min(mulmin[u][i], mulmin[v][i]));
             u = fa[u][i]; v = fa[v][i];
         }
-    ans = min(ans, mulmin[fa[u][0]][0]);
+    ans = min(ans, min(mulmin[u][0], mulmin[v][0]));
     printf("%d\n", ans);
     return ;
 }
@@ -89,12 +85,15 @@ inline void Mul_Lca(int u, int v) {
 inline bool cmp(EDGE a, EDGE b) {return (a.wgh > b.wgh);}
 
 int main() {
+    //freopen("track.in", "r", stdin);
     memset(mulmin, 0x3f, sizeof mulmin);
     scanf("%d%d", &n, &m);
     for (int i = 1; i <= n; ++i) f[i] = i;
     for (int i = 1; i <= m; ++i)
         scanf("%d%d%d", &u, &v, &w), add_edge(u, v, w);
-    std::sort(edge + 1, edge + (m << 1) + 1, cmp);
+    std::sort(edge + 1, edge + m + 1, cmp);
+    /*for (int i = 1; i <= m; ++i)
+        printf("%d %d %d\n", edge[i].fr, edge[i].to, edge[i].wgh);*/
     int tot(0), uf(0), vf(0);
     for (int i = 1; i <= m; ++i) {
         u = edge[i].fr; v = edge[i].to; w = edge[i].wgh;
@@ -103,7 +102,8 @@ int main() {
         AddEdge(u, v, w); unionn(u, v);
         tot++; if(tot == n - 1) {break;}
     }
-    dfs(1, 0);
+    for (int i = 1; i <= n; ++i)
+        if(!dep[i]) dfs(i, 0);
     scanf("%d", &q);
     for (int i = 1; i <= q; ++i) {
         scanf("%d%d", &u, &v);
