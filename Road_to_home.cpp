@@ -9,13 +9,13 @@ struct NODE{
 }node[MAXM];
 struct EDGE{
     int to, next, wgh;
-}edge[MAXM << 2];
+}edge[MAXM << 3];
 std::queue<int> que;
 int n, m, u, v, S, T, top;
-int head[MAXM << 1], dis[MAXM << 1];
-bool inque[MAXM << 1];
-inline bool cmpx(NODE a, NODE b) {return (a.x < b.x);}
-inline bool cmpy(NODE a, NODE b) {return (a.y < b.y);}
+int head[MAXM << 2], dis[MAXM << 2];
+bool inque[MAXM << 2];
+inline bool cmpx(NODE a, NODE b) {return (a.x == b.x ? a.y < b.y : a.x < b.x);}
+inline bool cmpy(NODE a, NODE b) {return (a.y == b.y ? a.x < b.x : a.y < b.y);}
 inline bool add_edge(int u, int v, int w) {
     edge[++top].to = v;
     edge[top].wgh = w;
@@ -34,7 +34,7 @@ inline void SPFA() {
     dis[S] = 0; inque[S] = true; que.push(S);
     int now(0), tmp(0), w(0);
     while(!que.empty()) {
-        now = que.front(); que.pop();
+        now = que.front(); que.pop(); inque[now] = false;
         for (int i = head[now]; i; i = edge[i].next) {
             tmp = edge[i].to; w = edge[i].wgh;
             if(dis[tmp] > dis[now] + w) {
