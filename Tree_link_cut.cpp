@@ -5,7 +5,7 @@ struct EDGE{
     int to, next;
 }edge[MAXN << 1];
 int n, m, root, mod, opt, tot, top, x, y, z;
-int beg[MAXN], dep[MAXN], dfn[MAXN], size[MAXN], 
+int beg[MAXN], dep[MAXN], dfn[MAXN], size[MAXN], link[MAXN],
     fa[MAXN], son[MAXN], ltop[MAXN], head[MAXN];
 inline void add_edge(int u, int v) {
     edge[++top].to = v;
@@ -21,17 +21,17 @@ inline void add_edge(int u, int v) {
 inline void swap(int &a, int &b) {a ^= b ^= a ^= b;}
 namespace DFS{
     inline void dfs_num(int now) {
-        size[now] = 1; int tmp(0);
+        size[now] = 1; int tmp(0), maxa(0);
         for (int i = head[now]; i; i = edge[i].next)
             if((tmp = edge[i].to) != fa[now]) {
-                fa[tmp] = now;
+                fa[tmp] = now; dep[tmp] = dep[now] + 1;
                 dfs_num(tmp);
                 size[now] += size[tmp];
-                if(size[tmp] > size[son[now]]) son[now] = tmp;
+                if(size[tmp] > maxa) maxa = size[tmp], son[now] = tmp;
             }
     }
     inline void dfs_treecut(int now, int top) {
-        dfn[now] = ++tot; ltop[now] = top;
+        dfn[now] = ++tot; ltop[now] = top; link[tot] = beg[now];
         if(!son[now]) return ;
         dfs_treecut(son[now], top); int tmp(0);
         for (int i = head[now]; i; i = edge[i].next)
@@ -40,12 +40,12 @@ namespace DFS{
     }
 }
 using namespace DFS;
-namespace SEGTREE{
+namespace SEGTREE {
     #define lson(x) (x << 1)
     #define rson(x) (x << 1 | 1)
     int segtree[MAXN << 2], lazy[MAXN << 2];
     inline void build(int now, int l, int r) {
-        if(l == r) {segtree[now] = beg[l] % mod; return ;}
+        if(l == r) {segtree[now] = link[l] % mod; return ;}
         int mid = (l + r) >> 1;
         build(lson(now), l, mid); build(rson(now), mid + 1, r);
         segtree[now] = (segtree[lson(now)] + segtree[rson(now)]) % mod;
@@ -56,6 +56,7 @@ namespace SEGTREE{
         segtree[lson(now)] = (segtree[lson(now)] + (mid - l + 1) * lazy[now]) % mod;
         segtree[rson(now)] = (segtree[rson(now)] + (r - mid) * lazy[now]) % mod;
         lazy[lson(now)] += lazy[now]; lazy[rson(now)] += lazy[now];
+        lazy[now] = 0;
     }
     inline void update(int now, int l, int r, int L, int R, int val) {
         if(l > R || r < L) return ;
@@ -75,7 +76,7 @@ namespace SEGTREE{
         if(L <= l && r <= R) return segtree[now];
         pushdown(now, l, r);
         int mid = (l + r) >> 1;
-        return (query(now, l, mid, L, R) + query(now, mid + 1, r, L, R)) % mod;
+        return (query(lson(now), l, mid, L, R) + query(rson(now), mid + 1, r, L, R)) % mod;
     }
 }
 using namespace SEGTREE;
@@ -118,6 +119,7 @@ namespace TREECUT{
 }
 using namespace TREECUT;
 int main() {
+    //freopen("linkcut.in", "r", stdin);
     scanf("%d%d%d%d", &n, &m, &root, &mod);
     for (int i = 1; i <= n; ++i)
         scanf("%d", &beg[i]);
