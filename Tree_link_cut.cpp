@@ -22,7 +22,7 @@ inline void swap(int &a, int &b) {a ^= b ^= a ^= b;}
 namespace DFS{
     inline void dfs_num(int now) {
         size[now] = 1; int tmp(0);
-        for (int i = head[now]; i; i = edge[i].next) 
+        for (int i = head[now]; i; i = edge[i].next)
             if((tmp = edge[i].to) != fa[now]) {
                 fa[tmp] = now;
                 dfs_num(tmp);
@@ -60,7 +60,7 @@ namespace SEGTREE{
     inline void update(int now, int l, int r, int L, int R, int val) {
         if(l > R || r < L) return ;
         if(L <= l && r <= R) {
-            segtree[now] = (segtree[now] + (l - r + 1) * val) % mod;
+            segtree[now] = (segtree[now] + (r - l + 1) * val) % mod;
             lazy[now] = (lazy[now] + val) % mod;
             return ;
         }
@@ -101,7 +101,7 @@ namespace TREECUT{
             x = fa[ltop[x]];
         }
         if(dep[x] > dep[y]) swap(x, y);
-        ans = (ans + query(1, 1, n, dfn[x], dfn[y]));
+        ans = (ans + query(1, 1, n, dfn[x], dfn[y])) % mod;
         printf("%d\n", ans);
         return ;
     }
@@ -112,7 +112,7 @@ namespace TREECUT{
     }
     inline void st_sum() {
         scanf("%d", &x);
-        printf("%d\n", query(1, 1, n, dfn[x], dfn[x] + size[x] - 1));
+        printf("%d\n", query(1, 1, n, dfn[x], dfn[x] + size[x] - 1) % mod);
         return ;
     }
 }
