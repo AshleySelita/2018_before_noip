@@ -5,7 +5,7 @@ const int MAXN = 100010;
 const int MAXQ = 100010;
 struct EDGE{
     int to, next;
-}edge[MAXN];
+}edge[MAXN << 1];
 int n, q, x, top, tot;
 int head[MAXN], size[MAXN], fa[MAXN], son[MAXN],
     ltop[MAXN], dfn[MAXN], segtree[MAXN << 2], lazy[MAXN << 2];
@@ -23,13 +23,13 @@ inline void add_edge(int u, int v) {
 }
 inline void dfs1(int now) {
     size[now] = 1;
-    int tmp(0);
+    int tmp(0), maxa(0);
     for (int i = head[now]; i; i = edge[i].next)
         if((tmp = edge[i].to) != fa[now]) {
             fa[tmp] = now;
             dfs1(tmp);
             size[now] += size[tmp];
-            if(size[tmp] > size[son[now]]) son[now] = size[tmp];
+            if(size[tmp] > maxa) maxa = size[tmp], son[now] = tmp;
         }
 }
 inline void dfs2(int now, int top) {
@@ -66,17 +66,19 @@ inline int update(int now, int l, int r, int L, int R, int val) {
 inline void inst(int x) {
     int ans = 0;
     while(ltop[x]) {
-        ans += dfn[x] - dfn[ltop[x]] + 1 - update(x, 1, n, dfn[ltop[x]], dfn[x], 1);
+        ans += dfn[x] - dfn[ltop[x]] + 1 - update(1, 1, n, dfn[ltop[x]], dfn[x], 1);
         x = fa[ltop[x]];
     }
-    ans += dfn[x] - dfn[ltop[x]] + 1 - update(x, 1, n, dfn[ltop[x]], dfn[x], 1);
+    ans += dfn[x] - dfn[ltop[x]] + 1 - update(1, 1, n, dfn[ltop[x]], dfn[x], 1);
     printf("%d\n", ans);
 }
 inline void uninst(int x) {
-    printf("%d\n", update(x, 1, n, dfn[x], dfn[x] + size[x] - 1, 0));
+    printf("%d\n", update(1, 1, n, dfn[x], dfn[x] + size[x] - 1, 0));
     return ;
 }
 int main() {
+    //freopen("testdata.in", "r", stdin);
+    //freopen("out.out", "w", stdout);
     scanf("%d", &n);
     for (int i = 1; i < n; ++i)
         scanf("%d", &x), add_edge(i, x);
