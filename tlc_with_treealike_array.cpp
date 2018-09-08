@@ -111,10 +111,11 @@ int main() {
     scanf("%d%d%d%d", &n, &m, &root, &mod);
     for (int i = 1; i <= n; ++i)
         scanf("%d", &beg[i]), beg[i] %= mod,
-        update(Ray1, beg[i] - beg[i - 1], i), 
-        update(Ray2, (i - 1) * (beg[i] - beg[i - 1]), i);
+        update(Ray1, i, beg[i] - beg[i - 1]), 
+        update(Ray2, i, (i - 1) * (beg[i] - beg[i - 1]));
     for (int i = 1; i < n; ++i)
         scanf("%d%d", &x, &y), add_edge(x, y);
+    dfs1(root); dfs2(root, root);
     for (int i = 1; i <= m; ++i) {
         scanf("%d", &opt);
         switch(opt) {
