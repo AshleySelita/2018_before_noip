@@ -44,37 +44,73 @@ using namespace DFS;
 namespace TALIKE_ARRAY{
     int Ray1[MAXN], Ray2[MAXN];
     inline int lowbit(int x) {return x & (-x);}
-    inline void update(int *Ray, int x, int pos) {
+    inline void update(int *Ray, int pos, int x) {
         while(pos <= n) {
             Ray[pos] = (Ray[pos] + x) % mod;
             pos += lowbit(pos);
         }
         return ;
     }
-    inline int query(int *Ray, int x, int pos) {
+    inline int query(int *Ray, int pos) {
         int ans(0);
         while(pos) {
             ans = (Ray[pos] + ans) % mod;
             pos -= lowbit(pos);
         }
-        return ans;
+        return ans % mod;
     }
 }
 using namespace TALIKE_ARRAY;
 namespace TREECUT{
     inline void sp_add() {
-        scanf("%d%d%d", &x, &y, &z); int ans(0);
+        scanf("%d%d%d", &x, &y, &z); z %= mod;
         while(ltop[x] != ltop[y]) {
             if(dep[ltop[x]] < dep[ltop[y]]) swap(x, y);
-            
+            update(Ray1, dfn[ltop[x]], z); update(Ray1, dfn[x] + 1, -z);
+            update(Ray2, dfn[ltop[x]], (dfn[ltop[x]] - 1) * z); 
+            update(Ray2, dfn[x] + 1, (-z) * dfn[x]);
         }
         if(dep[x] > dep[y]) swap(x, y);
+        update(Ray1, dfn[x], z); update(Ray1, dfn[y] + 1, -z);
+        update(Ray2, dfn[x], (dfn[x] - 1) * z);
+        update(Ray2, dfn[y] + 1, (-z) * dfn[y]);
+    }
+    inline void sp_query() {
+        scanf("%d%d", &x, &y); int ans(0), sum1(0), sum2(0);
+        while(ltop[x] != ltop[y]) {
+            if(dep[ltop[x]] < dep[ltop[y]]) swap(x, y);
+            sum1 = ((dfn[ltop[x]] - 1) * query(Ray1, dfn[ltop[x]] - 1) - query(Ray2, dfn[ltop[x]] - 1)) % mod;
+            sum2 = ((dfn[x]) * query(Ray1, dfn[x]) - query(Ray2, dfn[x])) % mod;
+            ans = (ans + sum2 - sum1) % mod;
+        }
+        if(dep[x] > dep[y]) swap(x, y);
+        sum1 = ((dfn[x] - 1) * query(Ray1, dfn[x] - 1) - query(Ray2, dfn[x] - 1)) % mod;
+        sum2 = ((dfn[y]) * query(Ray1, dfn[y]) - query(Ray2, dfn[y])) % mod;
+        ans = (ans + sum2 - sum1) % mod;
+        printf("%d\n", ans);
+        return ;
+    }
+    inline void st_add() {
+        scanf("%d%d", &x, &z); z %= mod;
+        update(Ray1, dfn[x], z); update(Ray1, dfn[x] + size[x], -z);
+        update(Ray2, dfn[x], (dfn[x] - 1) * z);
+        update(Ray2, dfn[x] + size[x], (-z) * (dfn[x] + size[x] - 1));
+    }
+    inline void st_query() {
+        scanf("%d", &x); int ans(0);
+        int sum1 = ((dfn[x] - 1) * query(Ray1, dfn[x] - 1) - query(Ray2, dfn[x] - 1));
+        int sum2 = ((dfn[x] + size[x] - 1) * query(Ray1, dfn[x] + size[x] - 1) - query(Ray2, dfn[x] - size[x] - 1)) % mod;
+        ans = (ans + sum1 + sum2) % mod;
+        printf("%d\n", ans);
+        return ;
     }
 }
+using namespace TREECUT;
 int main() {
+    freopen("linkcut.in", "r", stdin);
     scanf("%d%d%d%d", &n, &m, &root, &mod);
     for (int i = 1; i <= n; ++i)
-        scanf("%d", &beg[i]), 
+        scanf("%d", &beg[i]), beg[i] %= mod,
         update(Ray1, beg[i] - beg[i - 1], i), 
         update(Ray2, (i - 1) * (beg[i] - beg[i - 1]), i);
     for (int i = 1; i < n; ++i)
