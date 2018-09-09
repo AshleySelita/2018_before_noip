@@ -5,6 +5,7 @@ typedef long long ll;
 const int MAXN = 50010;
 struct Node{
     int x; int id;
+    Node() {x = 0; id = 0;}
     Node(int a,int b) {x = a, id = b;}
     bool operator < (const Node &a) const{return x > a.x;}
 };
