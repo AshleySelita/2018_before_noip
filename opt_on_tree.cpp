@@ -41,14 +41,63 @@ inline void dfs2(int now, int top) {
             dfs2(tmp, tmp);
     return ;
 }
-inline void bulid(int now, int l, int r) {
+inline void build(int now, int l, int r) {
     if(l == r) {segtree[now] = st[link[l]]; return ;}
     int mid = (l + r) >> 1;
-    bulid(lson(now), l, mid); bulid(son(now), mid + 1, r);
+    build(lson(now), l, mid); build(rson(now), mid + 1, r);
     segtree[now] = segtree[lson(now)] + segtree[rson(now)];
     return ;
 }
+inline void pushdown(int now, int l, int r) {
+    if(!lazy[now]) {return ;} int mid = (l + r) >> 1;
+    segtree[lson(now)] += (mid - l + 1) * lazy[now];
+    lazy[lson(now)] += lazy[now];
+    segtree[rson(now)] += (r - mid) * lazy[now];
+    lazy[rson(now)] += lazy[now];
+    lazy[now] = 0;
+    return ;
+}
+inline void update(int now, int l, int r, int L, int R, ll val) {
+    if(l > R || r < L) return ;
+    if(L <= l && r <= R) {
+        segtree[now] += (r - l + 1) * val;
+        lazy[now] += val;
+        return ;
+    }
+    pushdown(now, l, r); int mid = (l + r) >> 1;
+    update(lson(now), l, mid, L, R, val); 
+    update(rson(now), mid + 1, r, L, R, val);
+    segtree[now] = segtree[lson(now)] + segtree[rson(now)];
+    return ;
+}
+inline ll query(int now, int l, int r, int L, int R) {
+    if(r < L || l > R) return 0;
+    if(L <= l && r <= R) {return segtree[now];}
+    pushdown(now, l, r); int mid = (l + r) >> 1;
+    return (query(lson(now), l, mid, L, R) + query(rson(now), mid + 1, r, L, R));
+}
+inline void op_add() {
+    scanf("%d%d", &x, &a);
+    update(1, 1, n, dfn[x], dfn[x], a);
+    return ;
+}
+inline void st_add() {
+    scanf("%d%d", &x, &a);
+    update(1, 1, n, dfn[x], dfn[x] + size[x] - 1, a);
+    return ;
+}
+inline void tr_qry() {
+    scanf("%d", &x); ll ans(0);
+    while(ltop[x] != 1) {
+        ans += query(1, 1, n, dfn[ltop[x]], dfn[x]);
+        x = fa[ltop[x]];
+    }
+    ans += query(1, 1, n, dfn[1], dfn[x]);
+    printf("%lld\n", ans);
+    return ;
+}
 int main() {
+    //freopen("opt.in", "r", stdin);
     scanf("%d%d", &n, &m);
     for (int i = 1; i <= n; ++i) scanf("%d", &st[i]);
     for (int i = 1; i < n; ++i)
@@ -57,9 +106,9 @@ int main() {
     for (int i = 1; i <= m; ++i) {
         scanf("%d", &opt);
         switch(opt){
-            case 1:{op_add();}
-            case 2:{st_add();}
-            case 3:{tr_qry();}
+            case 1:{op_add(); break;}
+            case 2:{st_add(); break;}
+            case 3:{tr_qry(); break;}
         }
     }
     return 0;
