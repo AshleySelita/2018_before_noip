@@ -9,7 +9,7 @@ struct Node{
 }node[MAXN];
 struct EDGE{
     int to, next;
-}edge[MAXN << 1];
+}edge[MAXN];
 int n, m, f, top;
 int fa[MAXN], dis[MAXN], head[MAXN], st[MAXM], root[MAXN], dep[MAXN], doc[MAXN], kcc[MAXN];
 ll val[MAXM], def[MAXN], chn[MAXN], mul[MAXN], add[MAXN];
@@ -19,7 +19,6 @@ inline void add_edge(int u, int v) {
     edge[++top].to = v;
     edge[top].next = head[u];
     head[u] = top;
-
     return ;
 }
 inline void cal(int now, ll a, ll b) {
@@ -43,11 +42,6 @@ inline int merge(int x, int y) {
     if(dis[lson] < dis[rson]) swap(lson, rson);
     dis[x] = dis[rson] + 1;
     return x;
-}
-inline int del(int x) {
-    int lson = node[x].lson, rson = node[x].rson;
-    fa[lson] = fa[rson] = 0;
-    return merge(lson, rson);
 }
 inline void dfs(int now, int pre) {
     dep[now] = dep[pre] + 1; int tmp(0);
