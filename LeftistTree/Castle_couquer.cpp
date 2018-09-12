@@ -5,7 +5,6 @@ const int MAXN = 300010;
 const int MAXM = 300010;
 struct Node{
     int lson, rson;
-    Node(): lson(0), rson(0) {}
 }node[MAXN];
 struct EDGE{
     int to, next;
@@ -32,28 +31,27 @@ inline void pushdown(int now) {
     cal(node[now].rson, mul[now], add[now]);
     mul[now] = 1; add[now] = 0;
 }
-inline int merge(int x, int y) {
+int merge(int x, int y) {
     if(!x || !y) return (x + y);
     pushdown(x); pushdown(y);
     if(val[x] > val[y]) swap(x, y);
     int& lson = node[x].lson; int& rson = node[x].rson;
-    rson = merge(rson, y);
-    fa[rson] = x;
+    rson = merge(rson, y); fa[rson] = x;
     if(dis[lson] < dis[rson]) swap(lson, rson);
     dis[x] = dis[rson] + 1;
     return x;
 }
-inline int del(int x) {
-    int lson = node[x].lson; int rson = node[x].rson;
+inline int del(int now) {
+    int lson = node[now].lson, rson = node[now].rson;
     fa[lson] = fa[rson] = 0;
     return merge(lson, rson);
 }
-inline void dfs(int now, int pre) {
+void dfs(int now, int pre) {
     dep[now] = dep[pre] + 1; int tmp(0);
     for (re int i = head[now]; i; i = edge[i].next)
         dfs((tmp = edge[i].to), now), root[now] = merge(root[now], root[tmp]);
     while(root[now] && val[root[now]] < def[now]) {
-        pushdown(now);
+        pushdown(root[now]);
         doc[now]++; kcc[root[now]] = dep[st[root[now]]] - dep[now];
         root[now] = del(root[now]);
     }
