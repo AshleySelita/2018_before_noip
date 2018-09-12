@@ -31,7 +31,7 @@ inline void Get_inte(_T &x) {
     return ;
 }
 template<class _T>
-inline void Write_inte(_T x){
+inline void Write_inte(_T x) {
     if(x > 9) Write_inte(x / 10);
     putchar(x % 10 + '0');
     return ;
