@@ -26,7 +26,7 @@ template<class _T>
 inline void Get_inte(_T &x) {
     x = 0; char c(0);
     while(!isdigit(c = Get_char()));
-    do {x = (x << 1) + (x << 3) + (c ^ 48);}
+    do {x = x * 10 + (c ^ 48);}
     while(isdigit(c = Get_char()));
     return ;
 }
@@ -44,38 +44,42 @@ inline bool add_edge(int u, int v) {
     head[u] = top;
     return true;
 }
-int merge(int u, int v) {
+inline void maintain(int now) {
+    int lson = node[now].lson, rson = node[now].rson;
+    num[now] = num[lson] + num[rson] + 1;
+    tot[now] = tot[lson] + tot[rson] + val[now];
+    dis[now] = dis[rson] + 1;
+    return ;
+}
+inline int merge(int u, int v) {
     if(!u || !v) return (u + v);
     if(val[u] < val[v]) swap(u, v);
     int& lson = node[u].lson; int& rson = node[u].rson;
     rson = merge(rson, v);
     if(dis[lson] < dis[rson]) swap(lson, rson);
-    dis[u] = dis[rson] + 1;
+    maintain(u);
     return u;
 }
-void dfs(int now) {
+inline int del(int now) {
+    return merge(node[now].lson, node[now].rson);
+}
+inline void dfs(int now) {
     int tmp(0);
     for (int i = head[now]; i; i = edge[i].next) {
         dfs((tmp = edge[i].to)); root[now] = merge(root[now], root[tmp]);
-        num[now] += num[tmp]; tot[now] += tot[tmp];
     }
-    while(tot[now] > m) {
-        num[now]--; tot[now] -= val[root[now]];
-        root[now] = merge(node[root[now]].lson, node[root[now]].rson);
-    }
-    ans = max(ans, num[now] * ldshp[now]);
+    while(tot[root[now]] > m) root[now] = del(root[now]);
+    ans = max(ans, num[root[now]] * ldshp[now]);
     return ;
 }
 int main() {
-    //scanf("%d%lld", &n, &m);
     Get_inte(n); Get_inte(m);
     for (int i = 1; i <= n; ++i) {
-        //scanf("%d%lld%lld", &f, &val[i], &ldshp[i]);
         Get_inte(f); Get_inte(val[i]); Get_inte(ldshp[i]);
         f ? add_edge(f, i) : false; num[i] = 1; tot[i] = val[i];
         root[i] = merge(root[i], i);
     }
     dfs(1);
-    Write_inte(ans);
+    Write_inte(ans); putchar('\n');
     return 0;
 }
