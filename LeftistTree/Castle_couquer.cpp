@@ -43,25 +43,31 @@ inline int merge(int x, int y) {
     dis[x] = dis[rson] + 1;
     return x;
 }
+inline int del(int x) {
+    int lson = node[x].lson; int rson = node[x].rson;
+    fa[lson] = fa[rson] = 0;
+    return merge(lson, rson);
+}
 inline void dfs(int now, int pre) {
     dep[now] = dep[pre] + 1; int tmp(0);
     for (re int i = head[now]; i; i = edge[i].next)
-        dfs((tmp = edge[i].to), now), root[now] = merge(root[now], tmp);
+        dfs((tmp = edge[i].to), now), root[now] = merge(root[now], root[tmp]);
     while(root[now] && val[root[now]] < def[now]) {
         pushdown(now);
         doc[now]++; kcc[root[now]] = dep[st[root[now]]] - dep[now];
-        root[now] = merge(node[root[now]].lson, node[root[now]].rson);
+        root[now] = del(root[now]);
     }
     Mul[now] ? cal(root[now], chn[now], 0) : cal(root[now], 1, chn[now]);
     return ;
 }
 int main() {
-    freopen("F:\\MZQ\\Workspace\\LeftistTree\\castle.in", "r", stdin);
-    freopen("castle.out", "w", stdout);
+    //freopen("F:\\MZQ\\Workspace\\LeftistTree\\castle.in", "r", stdin);
+    //freopen("castle.out", "w", stdout);
     scanf("%d%d", &n, &m); dis[0] = -1;
     for (re int i = 1; i <= n; ++i) scanf("%lld", &def[i]);
-    for (re int i = 1; i <= n; ++i) {
-        scanf("%d%d%lld", &f, &Mul[i], &chn[i]);
+    int ttmp(0);
+    for (re int i = 2; i <= n; ++i) {
+        scanf("%d%d%lld", &f, &ttmp, &chn[i]); Mul[i] = ttmp;
         add_edge(f, i);
     }
     for (re int i = 1; i <= m; ++i) {
@@ -72,7 +78,7 @@ int main() {
     while(root[1]) {
         pushdown(root[1]);
         kcc[root[1]] = dep[st[root[1]]];
-        root[1] = merge(node[root[1]].lson, node[root[1]].rson);
+        root[1] = del(root[1]);
     }
     for (re int i = 1; i <= n; ++i) printf("%d\n", doc[i]);
     for (re int i = 1; i <= m; ++i) printf("%d\n", kcc[i]);

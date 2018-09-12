@@ -38,5 +38,7 @@
     "git.ignoreMissingGitWarning": true,
     "workbench.iconTheme": "vscode-icons",
     "editor.fontSize": 24,
-    "files.defaultLanguage": "cpp"
+    "files.defaultLanguage": "cpp",
+    "workbench.colorTheme": "Monokai",
+    "C_Cpp.loggingLevel": "Warning"
 }

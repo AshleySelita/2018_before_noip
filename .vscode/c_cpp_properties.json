@@ -11,7 +11,7 @@
                 "_UNICODE"
             ],
             "intelliSenseMode": "msvc-x64",
-            "compilerPath": "F:\\MZQ\\TDM-GCC-64\\bin\\g++.exe -Wall -Wextra -Wconversion"
+            "compilerPath": "F:\\MZQ\\TDM-GCC-64\\bin\\g++.exe -Wall -Wextra -Wconversion -std=c++11"
         }
     ],
     "version": 4
