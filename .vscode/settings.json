@@ -40,5 +40,5 @@
     "editor.fontSize": 24,
     "files.defaultLanguage": "cpp",
     "workbench.colorTheme": "Monokai",
-    "C_Cpp.loggingLevel": "Warning"
+    "C_Cpp.loggingLevel": "Debug"
 }
